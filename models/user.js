@@ -36,7 +36,7 @@ const userSchema = new Schema({
                 tips: { type: String, required: false }
             }
         ]
-    },//p
+    },
     NutritionPlan: {
         Meals: [
             {
