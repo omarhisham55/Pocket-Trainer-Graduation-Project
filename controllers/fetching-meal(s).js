@@ -44,10 +44,35 @@ exports.getMeals = (req, res, next) => {
       .catch(err => {console.log(err)});
   };
 
-  exports.getNutritionPlan = (req, res, next) => {
+  exports.getBreakfastInNutritionPlan = (req, res, next) => {
     req.user
       .populate()
       .then(user => {
-        res.send(user.NutritionPlan.Meals);
+        const BreakfastMeals = user.NutritionPlan.Meals.filter(meal => {
+          return meal.typeofMeal == 'breakfast';
+        })
+        res.send(BreakfastMeals);
+      })
+    };
+
+  exports.getLunchInNutritionPlan = (req, res, next) => {
+    req.user
+      .populate()
+      .then(user => {
+        const LunchMeals = user.NutritionPlan.Meals.filter(meal => {
+          return meal.typeofMeal == 'lunch';
+        })
+        res.send(LunchMeals);
+      })
+    };
+
+  exports.getDinnerInNutritionPlan = (req, res, next) => {
+    req.user
+      .populate()
+      .then(user => {
+        const DinnerMeals = user.NutritionPlan.Meals.filter(meal => {
+          return meal.typeofMeal == 'dinner';
+        })
+        res.send(DinnerMeals);
       })
     };
