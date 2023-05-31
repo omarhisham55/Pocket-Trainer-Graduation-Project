@@ -1,5 +1,5 @@
 exports.deleteChestExercise = (req, res, next) => {
-    const exeId = req.params.exerciseId;
+    const exeId = req.body.exerciseId;
     req.user
     .removeChestFromWorkoutPlan(exeId)
     .then(result => {
