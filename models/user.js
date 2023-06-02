@@ -97,38 +97,133 @@ const userSchema = new Schema({
 });
 
 //WorkoutPlan Methods
-// userSchema.methods.addToWorkoutPlan = function(exercise) {
-//         const exerciseWorkoutIndex = this.workoutPlan.Exercises.findIndex(cp => {
-//             return cp.exerciseId.toString() === exercise._id.toString();
-//         });
-//         const updatedWorkoutPlanExercises= [...this.workoutPlan.Exercises];
-//         if(exerciseWorkoutIndex >= 0){
-//             console.log('this exercise already added in your workoutPlan');
-//             exist = true;
-//         }
-//         else if (exerciseWorkoutIndex < 0) {
-//             updatedWorkoutPlanExercises.push({
-//                 exerciseId: exercise._id,
-//                 name: exercise.name,
-//                 imageUrl: exercise.imageUrl,
-//                 bodyPart: exercise.bodyPart,
-//                 target: exercise.target,
-//                 description: exercise.description,
-//                 tips: exercise.tips,
-//                 repetition: exercise.repetition,
-//                 sets: exercise.sets
-//             });
-//         }
-//         // const updatedWorkoutPlan = {
-//         //     Exercises: updatedWorkoutPlanExercises
-//         // };
-//         this.workoutPlan.Exercises = updatedWorkoutPlanExercises;
-//         return this.save();
-// };
+//user add exercises to workoutplan and check if it is already exist
+userSchema.methods.addToChestDay = function(exercise) {
+        const exerciseWorkoutIndex = this.workoutPlan.ChestDay.findIndex(cp => {
+            return cp.exerciseId.toString() === exercise._id.toString();
+        });
+        const updatedChestDay= [...this.workoutPlan.ChestDay];
+        if(exerciseWorkoutIndex >= 0){
+            console.log('this exercise already added in your workoutPlan');
+            exist = true;
+        }
+        else if (exerciseWorkoutIndex < 0) {
+            updatedChestDay.push({
+                exerciseId: exercise._id,
+                Title: exercise.Title,
+                BodyPart: exercise.BodyPart,
+                Type: exercise.Type,
+                Desc: exercise.Desc,
+                Equipment: exercise.Equipment,
+                Level: exercise.Level
+            });
+        }
+        // const updatedWorkoutPlan = {
+        //     ChestDay: updatedChestDay
+        // };
+        this.workoutPlan.ChestDay = updatedChestDay;
+        return this.save();
+};
+
+userSchema.methods.addToBackDay = function(exercise) {
+    const exerciseWorkoutIndex = this.workoutPlan.BackDay.findIndex(cp => {
+        return cp.exerciseId.toString() === exercise._id.toString();
+    });
+    const updatedBackDay= [...this.workoutPlan.BackDay];
+    if(exerciseWorkoutIndex >= 0){
+        console.log('this exercise already added in your workoutPlan');
+        exist = true;
+    }
+    else if (exerciseWorkoutIndex < 0) {
+        updatedBackDay.push({
+            exerciseId: exercise._id,
+            Title: exercise.Title,
+            BodyPart: exercise.BodyPart,
+            Type: exercise.Type,
+            Desc: exercise.Desc,
+            Equipment: exercise.Equipment,
+            Level: exercise.Level
+        });
+    }
+    this.workoutPlan.BackDay = updatedBackDay;
+    return this.save();
+};
+
+userSchema.methods.addToArmDay = function(exercise) {
+    const exerciseWorkoutIndex = this.workoutPlan.ArmDay.findIndex(cp => {
+        return cp.exerciseId.toString() === exercise._id.toString();
+    });
+    const updatedArmDay= [...this.workoutPlan.ArmDay];
+    if(exerciseWorkoutIndex >= 0){
+        console.log('this exercise already added in your workoutPlan');
+        exist = true;
+    }
+    else if (exerciseWorkoutIndex < 0) {
+        updatedArmDay.push({
+            exerciseId: exercise._id,
+            Title: exercise.Title,
+            BodyPart: exercise.BodyPart,
+            Type: exercise.Type,
+            Desc: exercise.Desc,
+            Equipment: exercise.Equipment,
+            Level: exercise.Level
+        });
+    }
+    this.workoutPlan.ArmDay = updatedArmDay;
+    return this.save();
+};
+
+userSchema.methods.addToLegDay = function(exercise) {
+    const exerciseWorkoutIndex = this.workoutPlan.LegDay.findIndex(cp => {
+        return cp.exerciseId.toString() === exercise._id.toString();
+    });
+    const updatedLegDay= [...this.workoutPlan.LegDay];
+    if(exerciseWorkoutIndex >= 0){
+        console.log('this exercise already added in your workoutPlan');
+        exist = true;
+    }
+    else if (exerciseWorkoutIndex < 0) {
+        updatedLegDay.push({
+            exerciseId: exercise._id,
+            Title: exercise.Title,
+            BodyPart: exercise.BodyPart,
+            Type: exercise.Type,
+            Desc: exercise.Desc,
+            Equipment: exercise.Equipment,
+            Level: exercise.Level
+        });
+    }
+    this.workoutPlan.LegDay = updatedLegDay;
+    return this.save();
+};
+
+userSchema.methods.addToShoulderDay = function(exercise) {
+    const exerciseWorkoutIndex = this.workoutPlan.ShoulderDay.findIndex(cp => {
+        return cp.exerciseId.toString() === exercise._id.toString();
+    });
+    const updatedShoulderDay= [...this.workoutPlan.ShoulderDay];
+    if(exerciseWorkoutIndex >= 0){
+        console.log('this exercise already added in your workoutPlan');
+        exist = true;
+    }
+    else if (exerciseWorkoutIndex < 0) {
+        updatedShoulderDay.push({
+            exerciseId: exercise._id,
+            Title: exercise.Title,
+            BodyPart: exercise.BodyPart,
+            Type: exercise.Type,
+            Desc: exercise.Desc,
+            Equipment: exercise.Equipment,
+            Level: exercise.Level
+        });
+    }
+    this.workoutPlan.ShoulderDay = updatedShoulderDay;
+    return this.save();
+};
 
 
 //WorkoutPlan Methods
-
+//create workoutplan with recommendation exercises
 userSchema.methods.addChestExercisesToWorkoutPlan = function(exercises) {
     const ChestExercises = []
     for( let exercise of exercises ){
@@ -214,8 +309,8 @@ userSchema.methods.addShoulderExercisesToWorkoutPlan = function(exercises) {
     return this.save();
 }
 
-
-// removing exercise whatever he exist in workoutplan
+//WorkoutPlan Methods
+// removing exercise whatever day he exist in workoutplan
 userSchema.methods.removeExerciseFromWorkoutPlan = function (exerciseId) {
     const updatedChestDayWorkoutPlan = this.workoutPlan.ChestDay.filter(exercise => {
       return exercise.exerciseId.toString() !== exerciseId.toString();

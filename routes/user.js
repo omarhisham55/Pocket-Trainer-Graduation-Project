@@ -10,7 +10,7 @@ const postWorkoutPlan = require('../controllers/WorkoutPlan-RecommendationSystem
 
 const deleteExerciseFromWorkoutPlan = require('../controllers/delete-exercise-workoutPlan');
 
-//const aaddingExerciseToWorkoutPlan = require('../controllers/adding-exercise-workoutPlan');
+const addingExerciseToWorkoutPlan = require('../controllers/adding-exercise-workoutplan')
 
 const isAuth = require('../middleware/is-auth');
 
@@ -33,7 +33,17 @@ router.post('/wourkoutplan-recommendation',isAuth, postWorkoutPlan);
 
 router.get('/workoutplan',isAuth, fetchingExerciseSController.getWorkoutPlan);
 
-router.delete('/wourkoutplan-delete-exercise',isAuth, deleteExerciseFromWorkoutPlan.deleteExercise);
+router.delete('/wourkoutplan/delete/exercise',isAuth, deleteExerciseFromWorkoutPlan.deleteExercise);
+
+router.post('/workoutplan/add/chest/exercise', isAuth, addingExerciseToWorkoutPlan.addChestExercise)
+
+router.post('/workoutplan/add/back/exercise', isAuth, addingExerciseToWorkoutPlan.addBackExercise)
+
+router.post('/workoutplan/add/arm/exercise', isAuth, addingExerciseToWorkoutPlan.addArmExercise)
+
+router.post('/workoutplan/add/leg/exercise', isAuth, addingExerciseToWorkoutPlan.addLegExercise)
+
+router.post('/workoutplan/add/shoulder/exercise', isAuth, addingExerciseToWorkoutPlan.addShoulderExercise)
 
 
 
