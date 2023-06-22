@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const meal = require('./meal');
+const crypto = require("crypto");
 
 const Schema = mongoose.Schema;
 
@@ -21,7 +22,28 @@ const userSchema = new Schema({
     photo: {
         data: Buffer,
         contentType: String
-      },
+    },
+    ListOfRequirment: {
+        HWlist: {
+                height: Number,
+                weight: Number
+        }
+        ,
+        workingOffDays: {
+                Day1: Number,
+                Day2: Number,
+                Day3: Number,
+                Day4: Number,
+                Day5: Number,
+                Day6: Number,
+                Day7: Number
+        },
+        training_location: String,
+        goal: String,
+        level: String,
+    },
+    passwordResetToken : String,
+    passwordResetExpires : Date,
     workoutPlan: {
         ChestDay: [
             {
@@ -31,7 +53,10 @@ const userSchema = new Schema({
                 Type: { type: String, required: true },
                 Desc: { type: String, required: true },
                 Equipment: { type: String, required: true },
-                Level: { type: String, required: true }
+                Level: { type: String, required: true },
+                imageUrl: { type: String, required: true },
+                Sets: { type: String, required: true },
+                Reps: { type: String, required: true }
             }
         ],
         LegDay: [
@@ -42,7 +67,10 @@ const userSchema = new Schema({
                 Type: { type: String, required: true },
                 Desc: { type: String, required: true },
                 Equipment: { type: String, required: true },
-                Level: { type: String, required: true }
+                Level: { type: String, required: true },
+                imageUrl: { type: String, required: true },
+                Sets: { type: String, required: true },
+                Reps: { type: String, required: true }
             }
         ],
         ArmDay: [
@@ -53,7 +81,10 @@ const userSchema = new Schema({
                 Type: { type: String, required: true },
                 Desc: { type: String, required: false },
                 Equipment: { type: String, required: true },
-                Level: { type: String, required: true }
+                Level: { type: String, required: true },
+                imageUrl: { type: String, required: true },
+                Sets: { type: String, required: true },
+                Reps: { type: String, required: true }
             }
         ],
         BackDay: [
@@ -64,7 +95,10 @@ const userSchema = new Schema({
                 Type: { type: String, required: true },
                 Desc: { type: String, required: false },
                 Equipment: { type: String, required: true },
-                Level: { type: String, required: true }
+                Level: { type: String, required: true },
+                imageUrl: { type: String, required: true },
+                Sets: { type: String, required: true },
+                Reps: { type: String, required: true }
             }
         ],
         ShoulderDay: [
@@ -75,7 +109,10 @@ const userSchema = new Schema({
                 Type: { type: String, required: true },
                 Desc: { type: String, required: false },
                 Equipment: { type: String, required: true },
-                Level: { type: String, required: true }
+                Level: { type: String, required: true },
+                imageUrl: { type: String, required: true },
+                Sets: { type: String, required: true },
+                Reps: { type: String, required: true }
             }
         ]
     },
@@ -83,18 +120,54 @@ const userSchema = new Schema({
         Meals: [
             {
                 mealId: { type: Schema.Types.ObjectId, ref: 'Meal', required: true },
-                name: { type: String, required: true },
+                Food_items: { type: String, required: true },
+                Breakfast: { type: Number, required: true },
+                Lunch: { type: Number, required: true },
+                Dinner: { type: Number, required: true },
+                VegNovVeg: { type: Number, required: true },
+                Calories: { type: Number, required: true },
+                Fats: { type: Number, required: true },
+                Proteins: { type: Number, required: true },
+                Iron: { type: Number, required: true },
+                Calcium: { type: Number, required: true },
+                Sodium: { type: Number, required: true },
+                Potassium: { type: Number, required: true },
+                Carbohydrates: { type: Number, required: true },
+                Fibre: { type: Number, required: true },
+                VitaminD: { type: Number, required: true },
+                Sugars: { type: Number, required: true },
                 imageUrl: { type: String, required: true },
-                protein: { type: String, required: true },
-                calories: { type: String, required: true },
-                carbs: { type: String, required: true },
-                fats: { type: String, required: true },
-                typeofMeal: { type: String, required: true },
-                quantity: { type: String, required: false }
+                Ingredients: { type: String, required: true },
             }
-        ]
+        ],
+        NutritionValues:{
+                Calories: { type: Number },
+                Fats: { type: Number },
+                Proteins: { type: Number },
+                Iron: { type: Number },
+                Calcium: { type: Number },
+                Sodium: { type: Number },
+                Potassium: { type: Number },
+                Carbohydrates: { type: Number },
+                Fibre: { type: Number },
+                VitaminD: { type: Number },
+                Sugars: { type: Number }
+            }
     }
 });
+
+
+
+//forget password
+userSchema.methods.createPasswordResetToken = function (){
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    console.log({resetToken},this.passwordResetToken);
+    return resetToken;
+ }
+
+
 
 //WorkoutPlan Methods
 //user add exercises to workoutplan and check if it is already exist
@@ -115,7 +188,10 @@ userSchema.methods.addToChestDay = function(exercise) {
                 Type: exercise.Type,
                 Desc: exercise.Desc,
                 Equipment: exercise.Equipment,
-                Level: exercise.Level
+                Level: exercise.Level,
+                imageUrl: exercise.imageUrl,
+                Sets: exercise.Sets,
+                Reps: exercise.Reps
             });
         }
         // const updatedWorkoutPlan = {
@@ -142,7 +218,10 @@ userSchema.methods.addToBackDay = function(exercise) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         });
     }
     this.workoutPlan.BackDay = updatedBackDay;
@@ -166,7 +245,10 @@ userSchema.methods.addToArmDay = function(exercise) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         });
     }
     this.workoutPlan.ArmDay = updatedArmDay;
@@ -190,7 +272,10 @@ userSchema.methods.addToLegDay = function(exercise) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         });
     }
     this.workoutPlan.LegDay = updatedLegDay;
@@ -214,7 +299,10 @@ userSchema.methods.addToShoulderDay = function(exercise) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         });
     }
     this.workoutPlan.ShoulderDay = updatedShoulderDay;
@@ -234,7 +322,10 @@ userSchema.methods.addChestExercisesToWorkoutPlan = function(exercises) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         })
     }
     this.workoutPlan.ChestDay = ChestExercises
@@ -251,7 +342,10 @@ userSchema.methods.addLegExercisesToWorkoutPlan = function(exercises) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         })
     }
     this.workoutPlan.LegDay = LegExercises
@@ -268,7 +362,10 @@ userSchema.methods.addArmExercisesToWorkoutPlan = function(exercises) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         })
     }
     this.workoutPlan.ArmDay = ArmExercises
@@ -285,7 +382,10 @@ userSchema.methods.addBackExercisesToWorkoutPlan = function(exercises) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         })
     }
     this.workoutPlan.BackDay = BackExercises
@@ -302,7 +402,10 @@ userSchema.methods.addShoulderExercisesToWorkoutPlan = function(exercises) {
             Type: exercise.Type,
             Desc: exercise.Desc,
             Equipment: exercise.Equipment,
-            Level: exercise.Level
+            Level: exercise.Level,
+            imageUrl: exercise.imageUrl,
+            Sets: exercise.Sets,
+            Reps: exercise.Reps
         })
     }
     this.workoutPlan.ShoulderDay = ShoulderExercises
@@ -356,14 +459,24 @@ userSchema.methods.addToNutritionPlan = function(meal) {
     else if (nutritionMealIndex < 0) {
         updatedNutritionPlanMeals.push({
             mealId: meal._id,
-            name: meal.name,
+            Food_items: meal.Food_items,
+            Breakfast: meal.Breakfast,
+            Lunch: meal.Lunch,
+            Dinner: meal.Dinner,
+            VegNovVeg: meal.VegNovVeg,
+            Calories: meal.Calories,
+            Fats: meal.Fats,
+            Proteins: meal.Proteins,
+            Iron: meal.Iron,
+            Calcium: meal.Calcium,
+            Sodium: meal.Sodium,
+            Potassium: meal.Potassium,
+            Carbohydrates: meal.Carbohydrates,
+            Fibre: meal.Fibre,
+            VitaminD: meal.VitaminD,
+            Sugars:meal.Sugars,
             imageUrl: meal.imageUrl,
-            fats: meal.fats,
-            carbs: meal.carbs,
-            protein: meal.protein,
-            calories: meal.calories,
-            quantity: meal.quantity,
-            typeofMeal: meal.typeofMeal
+            Ingredients: meal.Ingredients
         });
     }
     this.NutritionPlan.Meals = updatedNutritionPlanMeals;
@@ -377,6 +490,76 @@ userSchema.methods.removeFromNutritionPlan = function (mealId) {
     this.NutritionPlan.Meals = updatedNutritionPlanMeals;
     return this.save();
 };
+
+userSchema.methods.addMealsToNutritionPlan = function(meals) {
+    const MNP = []
+    for( let meal of meals ){
+        MNP.push({
+            mealId: meal._id,
+            Food_items: meal.Food_items,
+            Breakfast: meal.Breakfast,
+            Lunch: meal.Lunch,
+            Dinner: meal.Dinner,
+            VegNovVeg: meal.VegNovVeg,
+            Calories: meal.Calories,
+            Fats: meal.Fats,
+            Proteins: meal.Proteins,
+            Iron: meal.Iron,
+            Calcium: meal.Calcium,
+            Sodium: meal.Sodium,
+            Potassium: meal.Potassium,
+            Carbohydrates: meal.Carbohydrates,
+            Fibre: meal.Fibre,
+            VitaminD: meal.VitaminD,
+            Sugars: meal.Sugars,
+            imageUrl: meal.imageUrl,
+            Ingredients: meal.Ingredients
+            
+        })
+    }
+    this.NutritionPlan.Meals = MNP;
+    return this.save();
+}
+
+// calculate total Nutrition values of meals
+userSchema.methods.CalculatingValueOfNutrients = async function(meals) {
+    let totalCalories = 0;
+    let totalSugars = 0;
+    let totalVitaminD = 0;
+    let totalFibre = 0;
+    let totalCarbohydrates = 0;
+    let totalPotassium = 0;
+    let totalSodium = 0;
+    let totalCalcium = 0;
+    let totalIron = 0;
+    let totalProteins = 0;
+    let totalFats = 0;
+    for(mealo of meals) {
+        totalCalories += mealo.Calories;
+        totalSugars += mealo.Sugars;
+        totalVitaminD += mealo.VitaminD;
+        totalFibre += mealo.Fibre;
+        totalCarbohydrates += mealo.Carbohydrates;
+        totalPotassium += mealo.Potassium;
+        totalSodium += mealo.Sodium;
+        totalCalcium += mealo.Calcium;
+        totalIron += mealo.Iron;
+        totalProteins += mealo.Proteins;
+        totalFats += mealo.Fats;
+    }
+    this.NutritionPlan.NutritionValues.Calories = totalCalories;
+    this.NutritionPlan.NutritionValues.Sugars = totalSugars;
+    this.NutritionPlan.NutritionValues.VitaminD = totalVitaminD;
+    this.NutritionPlan.NutritionValues.Fibre = totalFibre;
+    this.NutritionPlan.NutritionValues.Carbohydrates = totalCarbohydrates;
+    this.NutritionPlan.NutritionValues.Potassium = totalPotassium;
+    this.NutritionPlan.NutritionValues.Sodium = totalSodium;
+    this.NutritionPlan.NutritionValues.Calcium = totalCalcium;
+    this.NutritionPlan.NutritionValues.Iron = totalIron;
+    this.NutritionPlan.NutritionValues.Proteins = totalProteins;
+    this.NutritionPlan.NutritionValues.Fats = totalFats;
+    await this.save()
+}
 
 
 

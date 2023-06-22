@@ -17,13 +17,6 @@ exports.postLogin = async (req, res) => {
     res.json({ token });
   }
 
-exports.getLogin = async (req, res) => {
-  const email = req.params.email;
-  const user = await User.findOne({ email });
-  const token = jwt.sign({ userId: user._id }, 'secret-key');
-  console.log(token);
-  res.send('Logged in successfully');
-}
 
 exports.postLogout = (req, res) => {
     // req.session.destroy(err => {
@@ -40,17 +33,13 @@ exports.signUp = async (req, res) => {
         if (user) {
           return res.status(409).json({ error: 'User already exists' });
         }
-    
+        console.log(req.file)
         // Hash password and create user
         const hashedPassword = await bcrypt.hash(password, 10);
         user = new User({
             name,
             email,
             password: hashedPassword,
-            // photo: {
-            //   data: fs.readFileSync(req.file.path),
-            //   contentType: req.file.mimetype
-            // }
           });
           if(req.file) {
             user.photo.data = fs.readFileSync(req.file.path);

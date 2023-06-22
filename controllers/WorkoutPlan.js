@@ -1,11 +1,21 @@
 const Exercise = require('../models/exercise');
 
-module.exports = (req, res, next) => {
-    let Training_Location = req.body.training_location
-    let goal = req.body.goal
-    let level = req.body.level
+exports.RecomendWorkoutPlan = async (req, res, next) => {
+
+  const { training_location, goal, level, HWlist, workingOffDays } = req.body;
+
+  req.user.ListOfRequirment.HWlist = HWlist;
+  req.user.ListOfRequirment.workingOffDays = workingOffDays;
+  req.user.ListOfRequirment.training_location = training_location;
+  req.user.ListOfRequirment.level = level;
+  req.user.ListOfRequirment.goal = goal;
+  try {
+    await req.user.save();
+  } catch (err) {
+    res.status(400).send(err);
+  }
   
-    if (Training_Location == "Home" && goal == "Bulk") { // Completed
+    if (training_location == "Home" && goal == "Bulk") { // Completed
       Exercise.aggregate([
         { $facet: {
             chest: [
@@ -166,7 +176,7 @@ module.exports = (req, res, next) => {
     
   
   
-    else if(Training_Location == "Gym" && goal == "Bulk") { // Completed
+    else if(training_location == "Gym" && goal == "Bulk") { // Completed
       Exercise.aggregate([
         { $facet: {
             chest: [
@@ -328,7 +338,7 @@ module.exports = (req, res, next) => {
     
   
   
-    else if(Training_Location == "Home" && goal == "Cardio") { // Completed
+    else if(training_location == "Home" && goal == "Cardio") { // Completed
       Exercise.aggregate([
         { $facet: {
             chest: [
@@ -488,7 +498,7 @@ module.exports = (req, res, next) => {
     
   
   
-    else if(Training_Location == "Gym" && goal == "Cardio") { // Completed
+    else if(training_location == "Gym" && goal == "Cardio") { // Completed
       Exercise.aggregate([
         { $facet: {
             chest: [
@@ -628,7 +638,7 @@ module.exports = (req, res, next) => {
     
   
   
-    else if(Training_Location == "Home" && goal == "Cut") { // Completed
+    else if(training_location == "Home" && goal == "Cut") { // Completed
       Exercise.aggregate([
         { $facet: {
             chest: [
@@ -804,7 +814,7 @@ module.exports = (req, res, next) => {
     
     
   
-    else if(Training_Location == "Gym" && goal == "Cut") { // Completed
+    else if(training_location == "Gym" && goal == "Cut") { // Completed
       Exercise.aggregate([
         {
           $facet: {
@@ -981,4 +991,138 @@ module.exports = (req, res, next) => {
         res.status(500).send("Error adding exercises to workout plan");
       });
     }
+};
+
+
+// replace exercise in workoutPlan
+exports.ReplaceExercise = async (req, res) => {
+    const OldExerciseId = req.body.OldExerciseId
+    const NewExerciseId = req.body.NewExerciseId
+
+    await req.user.removeExerciseFromWorkoutPlan(OldExerciseId)
+
+    const exercise = await Exercise.findById(NewExerciseId)
+
+    if(exercise.BodyPart == "Chest") {
+      Exercise.findById(NewExerciseId)
+      .then(exercise => {
+          return req.user.addToChestDay(exercise)
+      }).then(result => {
+          if(exist) {
+              res.status(200).send('this exercise already added in your workoutPlan');
+          } else {
+              res.status(201).send(result)
+          }
+      })
+      .catch(err => {
+          console.log(err);
+          res.status(400).send("Exercise you provide does not exist")
+        });
+      exist = false;
+
+
+    } else if( exercise.BodyPart == "Adductors" || exercise.BodyPart == "Hamstrings" || exercise.BodyPart == "Calves" || exercise.BodyPart == "Quadriceps" || exercise.BodyPart == "Glutes" ) {
+      Exercise.findById(NewExerciseId)
+        .then(exercise => {
+            return req.user.addToLegDay(exercise)
+        }).then(result => {
+            if(exist) {
+                res.status(200).send('this exercise already added in your workoutPlan');
+            } else {
+                res.status(201).send(result)
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(400).send("Exercise you provide does not exist")
+            });
+        exist = false;
+
+
+    } else if( exercise.BodyPart == "Lats" || exercise.BodyPart == "Lower Back" || exercise.BodyPart == "Middle Back" ) {
+      Exercise.findById(NewExerciseId)
+        .then(exercise => {
+            return req.user.addToBackDay(exercise)
+        }).then(result => {
+            if(exist) {
+                res.status(200).send('this exercise already added in your workoutPlan');
+            } else {
+                res.status(201).send(result)
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(400).send("Exercise you provide does not exist")
+          });
+        exist = false;
+
+
+    } else if( exercise.BodyPart == "Triceps" || exercise.BodyPart == "Biceps" || exercise.BodyPart == "Forearms" ) {
+      Exercise.findById(NewExerciseId)
+      .then(exercise => {
+          return req.user.addToArmDay(exercise)
+      }).then(result => {
+          if(exist) {
+              res.status(200).send('this exercise already added in your workoutPlan');
+          } else {
+              res.status(201).send(result)
+          }
+      })
+      .catch(err => {
+          console.log(err);
+          res.status(400).send("Exercise you provide does not exist")
+          });
+      exist = false;
+
+
+    } else if( exercise.BodyPart == "Shoulders" || exercise.BodyPart == "Neck" || exercise.BodyPart == "Traps" ) {
+      Exercise.findById(NewExerciseId)
+        .then(exercise => {
+            return req.user.addToShoulderDay(exercise)
+        }).then(result => {
+            if(exist) {
+                res.status(200).send('this exercise already added in your workoutPlan');
+            } else {
+                res.status(201).send(result)
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(400).send("Exercise you provide does not exist")
+            });
+        exist = false;
+    }
+};
+
+
+exports.getWorkoutPlan = (req, res, next) => {
+
+  const workoutDays = {};
+  const dayOff = "dayOff";
+  let i = 0;
+  for (let day in req.user.ListOfRequirment.workingOffDays) {
+    if (req.user.ListOfRequirment.workingOffDays[day] === 1) {
+      if(i == 0){
+        workoutDays[day] = req.user.workoutPlan.ChestDay;
+      }
+      else if(i == 1) {
+        workoutDays[day] = req.user.workoutPlan.BackDay;
+      }
+      else if(i == 2) {
+        workoutDays[day] = req.user.workoutPlan.ShoulderDay;
+      }
+      else if(i == 3) {
+        workoutDays[day] = req.user.workoutPlan.ArmDay;
+      }
+      else if(i == 4) {
+        workoutDays[day] = req.user.workoutPlan.LegDay;
+      }
+      i++;
+    }
+    else {
+      workoutDays[day] = dayOff;
+    }
+  }
+
+  res.send(workoutDays);
 };

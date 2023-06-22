@@ -1,7 +1,7 @@
 const Exercise = require('../models/exercise')
 
 exports.addChestExercise = (req, res, next) => {
-const exeId = req.body.exerciseId
+const exeId = req.params.exerciseId
     Exercise.findById(exeId)
     .then(exercise => {
         return req.user.addToChestDay(exercise)
@@ -21,7 +21,7 @@ const exeId = req.body.exerciseId
 
 
 exports.addBackExercise = (req, res, next) => {
-    const exeId = req.body.exerciseId
+    const exeId = req.params.exerciseId
         Exercise.findById(exeId)
         .then(exercise => {
             return req.user.addToBackDay(exercise)
@@ -41,7 +41,7 @@ exports.addBackExercise = (req, res, next) => {
 
 
 exports.addArmExercise = (req, res, next) => {
-    const exeId = req.body.exerciseId
+    const exeId = req.params.exerciseId
         Exercise.findById(exeId)
         .then(exercise => {
             return req.user.addToArmDay(exercise)
@@ -61,7 +61,7 @@ exports.addArmExercise = (req, res, next) => {
 
 
 exports.addLegExercise = (req, res, next) => {
-    const exeId = req.body.exerciseId
+    const exeId = req.params.exerciseId
         Exercise.findById(exeId)
         .then(exercise => {
             return req.user.addToLegDay(exercise)
@@ -81,7 +81,7 @@ exports.addLegExercise = (req, res, next) => {
 
 
 exports.addShoulderExercise = (req, res, next) => {
-    const exeId = req.body.exerciseId
+    const exeId = req.params.exerciseId
         Exercise.findById(exeId)
         .then(exercise => {
             return req.user.addToShoulderDay(exercise)
